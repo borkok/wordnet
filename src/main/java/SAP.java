@@ -1,9 +1,27 @@
 import edu.princeton.cs.algs4.Digraph;
 
+import java.util.Arrays;
+import java.util.Objects;
+
+/*
+Throw an IllegalArgumentException in the following situations:
+
+Any argument is null
+Any vertex argument is outside its prescribed range
+Any iterable argument contains a null item
+ */
 public class SAP {
 
     // constructor takes a digraph (not necessarily a DAG)
-    public SAP(Digraph G) {}
+    public SAP(Digraph digraph) {
+        validateNotNull(digraph);
+    }
+
+    private void validateNotNull(Object... o) {
+        if(Arrays.stream(o).anyMatch(Objects::isNull)) {
+            throw new IllegalArgumentException();
+        }
+    }
 
     // length of shortest ancestral path between v and w; -1 if no such path
     public int length(int v, int w) {
@@ -17,11 +35,13 @@ public class SAP {
 
     // length of shortest ancestral path between any vertex in v and any vertex in w; -1 if no such path
     public int length(Iterable<Integer> v, Iterable<Integer> w) {
+        validateNotNull(v, w);
         return 0;
     }
 
     // a common ancestor that participates in shortest ancestral path; -1 if no such path
     public int ancestor(Iterable<Integer> v, Iterable<Integer> w) {
+        validateNotNull(v, w);
         return 0;
     }
 
