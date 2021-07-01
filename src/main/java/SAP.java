@@ -1,8 +1,5 @@
 import edu.princeton.cs.algs4.Digraph;
 
-import java.util.Arrays;
-import java.util.Objects;
-
 /*
 Throw an IllegalArgumentException in the following situations:
 
@@ -19,15 +16,9 @@ public class SAP {
 
     // constructor takes a digraph (not necessarily a DAG)
     public SAP(Digraph digraph) {
-        validateNotNull(digraph);
+        WordNetValidator.validateNotNull(digraph);
         sapForVerticePair = new SapForVerticePair(digraph);
         sapForVerticeGroups = new SapForVerticeGroups(digraph);
-    }
-
-    private void validateNotNull(Object... o) {
-        if(Arrays.stream(o).anyMatch(Objects::isNull)) {
-            throw new IllegalArgumentException();
-        }
     }
 
     /**
@@ -46,13 +37,16 @@ public class SAP {
 
     // length of shortest ancestral path between any vertex in v and any vertex in w; -1 if no such path
     public int length(Iterable<Integer> v, Iterable<Integer> w) {
-        validateNotNull(v, w);
+        WordNetValidator.validateNotNull(v, w);
         return sapForVerticeGroups.findSAP(v, w).map(Ancestor::getDistanceTo).orElse(-1);
     }
 
     // a common ancestor that participates in shortest ancestral path; -1 if no such path
     public int ancestor(Iterable<Integer> v, Iterable<Integer> w) {
-        validateNotNull(v, w);
+        WordNetValidator.validateNotNull(v, w);
         return sapForVerticeGroups.findSAP(v, w).map(Ancestor::getAncestor).orElse(-1);
     }
+
+    // do unit testing of this class
+    public static void main(String[] args) {}
 }
