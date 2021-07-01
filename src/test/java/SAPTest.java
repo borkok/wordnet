@@ -42,7 +42,21 @@ class SAPTest {
                 //digraph without edges
                 Arguments.of(
                         new Digraph(2), 0, 1, -1, -1
+                ),
+                //digraph with one edge
+                Arguments.of(
+                        DigraphBuilder.vertices(2)
+                                .edge(0,1)
+                                .build(),
+                        0, 1, 1, 1
+                ),
+                Arguments.of(
+                        DigraphBuilder.vertices(2)
+                                      .edge(1, 0)
+                                      .build(),
+                        0, 1, 1, 0
                 )
+
         );
     }
 
