@@ -19,12 +19,13 @@ You are free to call the relevant methods in BreadthFirstDirectedPaths.java
 public class SAP {
 
     private final Digraph digraph;
-    //cache BreadthFirstDirectedPaths
+    private final BreadthFirstDirectedPaths[] bfsCache;
 
     // constructor takes a digraph (not necessarily a DAG)
     public SAP(Digraph digraph) {
         validateNotNull(digraph);
         this.digraph = digraph;
+        this.bfsCache = new BreadthFirstDirectedPaths[digraph.V()];
     }
 
     private void validateNotNull(Object... o) {
@@ -55,8 +56,8 @@ public class SAP {
     }
 
     private List<Ancestor> findDistancesSumByVertex(int v, int w) {
-        BreadthFirstDirectedPaths bfsForV = new BreadthFirstDirectedPaths(digraph, v);
-        BreadthFirstDirectedPaths bfsForW = new BreadthFirstDirectedPaths(digraph, w);
+        BreadthFirstDirectedPaths bfsForV = findBfsForV(v);
+        BreadthFirstDirectedPaths bfsForW = findBfsForV(w);
 
         List<Ancestor> distancesSum = new ArrayList<>();
         for (int i = 0; i < digraph.V(); i++) {
@@ -65,6 +66,13 @@ public class SAP {
             }
         }
         return distancesSum;
+    }
+
+    private BreadthFirstDirectedPaths findBfsForV(int v) {
+        if (bfsCache[v] == null) {
+            bfsCache[v] = new BreadthFirstDirectedPaths(digraph, v);
+        }
+        return bfsCache[v];
     }
 
 
