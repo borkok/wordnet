@@ -63,6 +63,15 @@ class SAPTest {
                                       .edge(2, 0)
                                       .build(),
                         2, 1, 2, 0
+                ),
+                //many edges
+                Arguments.of(
+                        DigraphBuilder.theRootedButNotATree(),
+                        0, 8, 4, 5
+                ),
+                Arguments.of(
+                        DigraphBuilder.theRootedButNotATree(),
+                        0, 5, 3, 5
                 )
 
         );

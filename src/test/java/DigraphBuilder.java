@@ -16,6 +16,20 @@ class DigraphBuilder {
         return new Digraph(1);
     }
 
+    static Digraph theRootedButNotATree() {
+        return vertices(9)
+                .edge(0, 2)
+                .edge(1,2)
+                .edge(2,3)
+                .edge(4,3)
+                .edge(3,5)
+                .edge(6,5)
+                .edge(7,6)
+                .edge(8,7)
+                .edge(8,5)
+                .build();
+    }
+
     static DigraphBuilder vertices(int v) {
         return new DigraphBuilder(v);
     }
