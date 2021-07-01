@@ -55,6 +55,14 @@ class SAPTest {
                                       .edge(1, 0)
                                       .build(),
                         0, 1, 1, 0
+                ),
+                //two edges
+                Arguments.of(
+                        DigraphBuilder.vertices(3)
+                                      .edge(1, 0)
+                                      .edge(2, 0)
+                                      .build(),
+                        2, 1, 2, 0
                 )
 
         );
