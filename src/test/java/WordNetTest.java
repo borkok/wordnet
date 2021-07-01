@@ -1,5 +1,12 @@
 import org.junit.jupiter.api.Test;
+import org.junit.jupiter.params.ParameterizedTest;
+import org.junit.jupiter.params.provider.Arguments;
+import org.junit.jupiter.params.provider.MethodSource;
 
+import java.util.List;
+import java.util.stream.Stream;
+
+import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.Assertions.assertThatThrownBy;
 import static org.junit.jupiter.api.Assertions.assertAll;
 
@@ -7,7 +14,7 @@ class WordNetTest {
 
     @Test
     void whenAnyArgumentIsNull_throwsIllegalArgumentException() {
-        WordNet someWordNet = new WordNet("A", "B");
+        WordNet someWordNet = WordNet.fromCsv(new String[] { }, new String[] { });
         assertAll(
                 () -> assertThatThrownBy(() -> new WordNet(null, null))
                         .isInstanceOf(IllegalArgumentException.class),
@@ -20,12 +27,27 @@ class WordNetTest {
         );
     }
 
-    @Test
-    void nouns() {
+    @ParameterizedTest
+    @MethodSource("params")
+    void nouns(String[] synsets, List<String> expectedNouns) {
+        WordNet wordNet = WordNet.fromCsv(synsets, new String[] { });
+
+        assertThat(wordNet.nouns()).containsAll(expectedNouns);
+        expectedNouns.forEach(noun -> assertThat(wordNet.isNoun(noun)).isTrue());
+        assertThat(wordNet.isNoun("not_existing_word")).isFalse();
     }
 
-    @Test
-    void isNoun() {
+    private static Stream<Arguments> params() {
+        return Stream.of(
+                Arguments.of(
+                        new String[] { "43,word_net,description of a word" },
+                        List.of("word_net")
+                ),
+                Arguments.of(
+                        new String[] { "43,word_net,description of a word", "45,word synonym,desc" },
+                        List.of("word", "synonym", "word_net")
+                )
+        );
     }
 
     @Test
