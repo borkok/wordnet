@@ -20,10 +20,12 @@ class SapForVerticeGroups {
     }
 
     Optional<Ancestor> findSAP(Iterable<Integer> v, Iterable<Integer> w) {
+        WordNetValidator.notNull(v, w);
         Set<Integer> vSet = StreamSupport.stream(v.spliterator(), false)
                                             .collect(Collectors.toSet());
         Set<Integer> wSet = StreamSupport.stream(w.spliterator(), false)
                                          .collect(Collectors.toSet());
+        if (vSet.isEmpty() || wSet.isEmpty()) return Optional.empty();
         return findDistancesSumByGroup(vSet, wSet).stream().sorted().findFirst();
     }
 

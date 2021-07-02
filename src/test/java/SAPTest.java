@@ -8,6 +8,7 @@ import java.util.HashMap;
 import java.util.Set;
 import java.util.stream.Stream;
 
+import static java.util.Collections.emptySet;
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.Assertions.assertThatThrownBy;
 import static org.junit.jupiter.api.Assertions.assertAll;
@@ -132,6 +133,19 @@ class SAPTest {
                 Arguments.of(
                         DigraphBuilder.theRootedButNotATree(),
                         Set.of(0, 1), Set.of(4, 6), 3, 3
+                ),
+                //empty iterables
+                Arguments.of(
+                        DigraphBuilder.theRootedButNotATree(),
+                        emptySet(), Set.of(8), -1, -1
+                ),
+                Arguments.of(
+                        DigraphBuilder.theRootedButNotATree(),
+                        Set.of(0, 1), emptySet(), -1, -1
+                ),
+                Arguments.of(
+                        DigraphBuilder.theRootedButNotATree(),
+                        emptySet(), emptySet(), -1, -1
                 )
 
         );
