@@ -44,17 +44,56 @@ class WordNetTest {
                         List.of("word_net")
                 ),
                 Arguments.of(
-                        new String[] { "43,word_net,description of a word", "45,word synonym,desc" },
+                        new String[] {
+                                "43,word_net,description of a word", "45,word synonym,desc"
+                        },
                         List.of("word", "synonym", "word_net")
                 )
         );
     }
 
-    @Test
-    void distance() {
+    @ParameterizedTest
+    @MethodSource("distanceParams")
+    void distance(String[] synsets, String[] hypernyms,
+             List<String> hyponyms, String ancestor, int distance) {
+        WordNet wordNet = WordNet.fromCsv(synsets, hypernyms);
+
+        hyponyms.forEach(hyponym -> assertAll(
+                () -> assertThat(wordNet.distance(hyponym, ancestor)).as(hyponym + "->" + ancestor)
+                                                                     .isEqualTo(distance),
+                () -> assertThat(wordNet.distance(ancestor, hyponym)).as(ancestor + "->" + hyponym)
+                                                                     .isEqualTo(distance)
+        ));
     }
 
-    @Test
-    void sap() {
+    private static Stream<Arguments> distanceParams() {
+        return Stream.of(
+                Arguments.of(
+                        new String[] { "0,word_net,description of a word", "1,word synonym,desc" },
+                        new String[] { "1,0" },
+                        List.of("word", "synonym"), "word_net", 1
+                )
+        );
+    }
+
+    @ParameterizedTest
+    @MethodSource("sapParams")
+    void sap(String[] synsets, String[] hypernyms,
+                  List<String> hyponyms, String ancestor) {
+        WordNet wordNet = WordNet.fromCsv(synsets, hypernyms);
+
+        for (int i = 1; i < hyponyms.size(); i++) {
+            assertThat(wordNet.sap(hyponyms.get(i - 1), hyponyms.get(i))).isEqualTo(ancestor);
+        }
+    }
+
+    private static Stream<Arguments> sapParams() {
+        return Stream.of(
+                Arguments.of(
+                        new String[] { "0,word_net,description of a word", "1,word,desc", "2,other_word,description" },
+                        new String[] { "1,0", "2,0" },
+                        List.of("word", "other_word"), "word_net"
+                )
+        );
     }
 }

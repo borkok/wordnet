@@ -74,6 +74,10 @@ class SAPTest {
                 Arguments.of(
                         DigraphBuilder.theRootedButNotATree(),
                         0, 5, 3, 5
+                ),
+                Arguments.of(
+                        DigraphBuilder.theRootedButNotATree(),
+                        5, 2, 2, 5
                 )
 
         );
