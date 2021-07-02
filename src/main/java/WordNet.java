@@ -29,13 +29,15 @@ public class WordNet {
 
     // constructor takes the name of the two input files
     public WordNet(String synsets, String hypernyms) {
-        WordNetValidator.validateNotNull(synsets, hypernyms);
+        WordNetValidator.notNull(synsets, hypernyms);
         initialize(new In(synsets).readAllLines(), new In(hypernyms).readAllLines());
     }
 
     private void initialize(String[] synsetsCsv, String[] hypernymsCsv) {
         initializeSynset(synsetsCsv);
-        initializeSAP(hypernymsCsv);
+        Digraph digraph = createDigraph(hypernymsCsv);
+        WordNetValidator.isAcyclicRooted(digraph);
+        sap = new SAP(digraph);
     }
 
     private void initializeSynset(String[] synsetsCsv) {
@@ -56,7 +58,7 @@ public class WordNet {
         }
     }
 
-    private void initializeSAP(String[] hypernymsCsv) {
+    private Digraph createDigraph(String[] hypernymsCsv) {
         Digraph digraph = new Digraph(synsetArray.length);
         for (String line : hypernymsCsv) {
             String[] hypernyms = line.split(",");
@@ -64,7 +66,7 @@ public class WordNet {
                 digraph.addEdge(Integer.parseInt(hypernyms[0]), Integer.parseInt(hypernyms[i]));
             }
         }
-        sap = new SAP(digraph);
+        return digraph;
     }
 
     // returns all WordNet nouns
@@ -74,7 +76,7 @@ public class WordNet {
 
     // is the word a WordNet noun?
     public boolean isNoun(String word) {
-        WordNetValidator.validateNotNull(word);
+        WordNetValidator.notNull(word);
         return wordSet.containsKey(word);
     }
 
@@ -92,7 +94,7 @@ public class WordNet {
     // a synset (second field of synsets.txt) that is the common ancestor of nounA and nounB
     // in a shortest ancestral path (defined below)
     public String sap(String nounA, String nounB) {
-        WordNetValidator.validateNotNull(nounA, nounB);
+        WordNetValidator.notNull(nounA, nounB);
         int indexA = findIndex(nounA).orElseThrow(IllegalArgumentException::new);
         int indexB = findIndex(nounB).orElseThrow(IllegalArgumentException::new);
         int ancestorIndex = sap.ancestor(indexA, indexB);

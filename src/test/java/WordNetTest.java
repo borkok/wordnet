@@ -14,7 +14,7 @@ class WordNetTest {
 
     @Test
     void whenAnyArgumentIsNull_throwsIllegalArgumentException() {
-        WordNet someWordNet = WordNet.fromCsv(new String[] { }, new String[] { });
+        WordNet someWordNet = WordNet.fromCsv(new String[] { "44,word,desc" }, new String[] { });
         assertAll(
                 () -> assertThatThrownBy(() -> new WordNet(null, null))
                         .isInstanceOf(IllegalArgumentException.class),
@@ -27,10 +27,66 @@ class WordNetTest {
         );
     }
 
+    @Test
+    void whenGraphHasCycle_throwsIllegalArgumentException() {
+        String[] words = {
+                "0,word_net,description of a word",
+                "1,word_1,desc",
+                "2,word_2,desc",
+                "3,word_3,desc",
+                "4,word_4,desc",
+                "5,word_5,desc",
+                "6,word_6,desc",
+                "7,word_7,desc",
+                "8,word_8,desc"
+        };
+        String[] cyclicGraph = {
+                "0,2",
+                "1,2",
+                "2,3",
+                "4,3",
+                "3,5",
+                "6,5",
+                "7,6",
+                "8,7",
+                "5,8"
+        };
+        assertThatThrownBy(() -> WordNet.fromCsv(words, cyclicGraph))
+                .isInstanceOf(IllegalArgumentException.class);
+    }
+
+    @Test
+    void whenGraphHasTwoRoots_throwsIllegalArgumentException() {
+        String[] words = {
+                "0,word_net,description of a word",
+                "1,word_1,desc",
+                "2,word_2,desc",
+                "3,word_3,desc",
+                "4,word_4,desc",
+                "5,word_5,desc",
+                "6,word_6,desc",
+                "7,word_7,desc",
+                "8,word_8,desc"
+        };
+        String[] twoRootGraph = {
+                "0,2",
+                "1,2",
+                "2,3",
+                "4,3",
+                "3,5",
+                "6,5",
+                "7,6",
+                "7,8",
+                "6,8" //roots: 5 & 8
+        };
+        assertThatThrownBy(() -> WordNet.fromCsv(words, twoRootGraph))
+                .isInstanceOf(IllegalArgumentException.class);
+    }
+
     @ParameterizedTest
     @MethodSource("params")
-    void nouns(String[] synsets, List<String> expectedNouns) {
-        WordNet wordNet = WordNet.fromCsv(synsets, new String[] { });
+    void nouns(String[] synsets, String[] hypernyms, List<String> expectedNouns) {
+        WordNet wordNet = WordNet.fromCsv(synsets, hypernyms);
 
         assertThat(wordNet.nouns()).containsAll(expectedNouns);
         expectedNouns.forEach(noun -> assertThat(wordNet.isNoun(noun)).isTrue());
@@ -41,12 +97,14 @@ class WordNetTest {
         return Stream.of(
                 Arguments.of(
                         new String[] { "43,word_net,description of a word" },
+                        new String[] {},
                         List.of("word_net")
                 ),
                 Arguments.of(
                         new String[] {
                                 "43,word_net,description of a word", "45,word synonym,desc"
                         },
+                        new String[] { "1,0"},
                         List.of("word", "synonym", "word_net")
                 )
         );

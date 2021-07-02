@@ -16,9 +16,10 @@ public class SAP {
 
     // constructor takes a digraph (not necessarily a DAG)
     public SAP(Digraph digraph) {
-        WordNetValidator.validateNotNull(digraph);
-        sapForVerticePair = new SapForVerticePair(digraph);
-        sapForVerticeGroups = new SapForVerticeGroups(digraph);
+        WordNetValidator.notNull(digraph);
+        Digraph digraphDefensiveCopy = new Digraph(digraph);
+        sapForVerticePair = new SapForVerticePair(digraphDefensiveCopy);
+        sapForVerticeGroups = new SapForVerticeGroups(digraphDefensiveCopy);
     }
 
     /**
@@ -37,13 +38,13 @@ public class SAP {
 
     // length of shortest ancestral path between any vertex in v and any vertex in w; -1 if no such path
     public int length(Iterable<Integer> v, Iterable<Integer> w) {
-        WordNetValidator.validateNotNull(v, w);
+        WordNetValidator.notNull(v, w);
         return sapForVerticeGroups.findSAP(v, w).map(Ancestor::getDistanceTo).orElse(-1);
     }
 
     // a common ancestor that participates in shortest ancestral path; -1 if no such path
     public int ancestor(Iterable<Integer> v, Iterable<Integer> w) {
-        WordNetValidator.validateNotNull(v, w);
+        WordNetValidator.notNull(v, w);
         return sapForVerticeGroups.findSAP(v, w).map(Ancestor::getAncestor).orElse(-1);
     }
 
