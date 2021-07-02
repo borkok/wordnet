@@ -52,6 +52,16 @@ class WordNetTest {
         );
     }
 
+    @Test
+    void selfDistanceIsZero() {
+        String[] synsets = new String[] { "0,word_net,description of a word", "1,word synonym,desc" };
+        String[] hypernyms = new String[] { "1,0" };
+        WordNet wordNet = WordNet.fromCsv(synsets, hypernyms);
+
+        assertThat(wordNet.distance("word", "synonym")).isZero();
+        assertThat(wordNet.distance("word", "word")).isZero();
+    }
+
     @ParameterizedTest
     @MethodSource("distanceParams")
     void distance(String[] synsets, String[] hypernyms,
