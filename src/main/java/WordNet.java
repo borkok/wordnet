@@ -1,8 +1,10 @@
 import edu.princeton.cs.algs4.Digraph;
 import edu.princeton.cs.algs4.In;
 
+import java.util.Collections;
 import java.util.HashMap;
-import java.util.Optional;
+import java.util.LinkedList;
+import java.util.List;
 
 /**
  * Throw an IllegalArgumentException in the following situations:
@@ -14,7 +16,8 @@ import java.util.Optional;
  */
 public class WordNet {
 
-    private HashMap<String, Integer> wordSet;
+    //one noun can be part of a few synsets, each with distinct index
+    private HashMap<String, List<Integer>> synsetIndicesByNouns;
     private String[] synsetArray;
     private SAP sap;
 
@@ -44,7 +47,7 @@ public class WordNet {
     private void initializeSynset(String[] synsetsCsv) {
         int synsetCount = synsetsCsv.length;
         synsetArray = new String[synsetCount];
-        wordSet = new HashMap<>();
+        synsetIndicesByNouns = new HashMap<>();
         for (int i = 0; i < synsetCount; i++) {
             String[] line = synsetsCsv[i].split(",");
 
@@ -54,7 +57,8 @@ public class WordNet {
             int vertex = Integer.parseInt(line[0]);
             String[] words = synset.split(" ");
             for (String word : words) {
-                wordSet.put(word, vertex);
+                synsetIndicesByNouns.putIfAbsent(word, new LinkedList<>());
+                synsetIndicesByNouns.get(word).add(vertex);
             }
         }
     }
@@ -72,34 +76,34 @@ public class WordNet {
 
     // returns all WordNet nouns
     public Iterable<String> nouns() {
-        return wordSet.keySet();
+        return synsetIndicesByNouns.keySet();
     }
 
     // is the word a WordNet noun?
     public boolean isNoun(String word) {
         WordNetValidator.notNull(word);
-        return wordSet.containsKey(word);
+        return synsetIndicesByNouns.containsKey(word);
     }
 
     // distance between nounA and nounB (defined below)
     public int distance(String nounA, String nounB) {
-        int indexA = findIndex(nounA).orElseThrow(IllegalArgumentException::new);
-        int indexB = findIndex(nounB).orElseThrow(IllegalArgumentException::new);
+        WordNetValidator.notNull(nounA, nounB);
+        List<Integer> indexA = findIndices(nounA);
+        List<Integer> indexB = findIndices(nounB);
         return sap.length(indexA, indexB);
     }
 
-    private Optional<Integer> findIndex(String nounA) {
-        return Optional.ofNullable(wordSet.get(nounA));
+    private List<Integer> findIndices(String nounA) {
+        return synsetIndicesByNouns.getOrDefault(nounA, Collections.emptyList());
     }
 
     // a synset (second field of synsets.txt) that is the common ancestor of nounA and nounB
     // in a shortest ancestral path (defined below)
     public String sap(String nounA, String nounB) {
         WordNetValidator.notNull(nounA, nounB);
-        int indexA = findIndex(nounA).orElseThrow(IllegalArgumentException::new);
-        int indexB = findIndex(nounB).orElseThrow(IllegalArgumentException::new);
+        List<Integer> indexA = findIndices(nounA);
+        List<Integer> indexB = findIndices(nounB);
         int ancestorIndex = sap.ancestor(indexA, indexB);
         return synsetArray[ancestorIndex];
-
     }
 }

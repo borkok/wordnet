@@ -4,7 +4,6 @@ import org.junit.jupiter.params.ParameterizedTest;
 import org.junit.jupiter.params.provider.Arguments;
 import org.junit.jupiter.params.provider.MethodSource;
 
-import java.util.HashMap;
 import java.util.Set;
 import java.util.stream.Stream;
 
@@ -158,16 +157,5 @@ class SAPTest {
                 )
 
         );
-    }
-
-    @Test
-    public void checkingSetInMap() {
-        Set<Integer> set123 = Set.of(1, 2, 3);
-        Set<Integer> set231 = Set.of(2, 3, 1);
-        HashMap<Set<Integer>, Integer> map = new HashMap<>();
-        map.put(set123, 1);
-        map.put(set231, 2);
-        assertThat(set123.equals(set231)).isTrue();
-        assertThat(map.get(set123)).isEqualTo(2);
     }
 }

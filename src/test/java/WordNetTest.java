@@ -1,9 +1,12 @@
+import edu.princeton.cs.algs4.In;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.params.ParameterizedTest;
 import org.junit.jupiter.params.provider.Arguments;
 import org.junit.jupiter.params.provider.MethodSource;
 
+import java.net.URL;
 import java.util.List;
+import java.util.Objects;
 import java.util.stream.Stream;
 
 import static org.assertj.core.api.Assertions.assertThat;
@@ -164,5 +167,24 @@ class WordNetTest {
                         List.of("word", "other_word"), "word_net"
                 )
         );
+    }
+
+    @ParameterizedTest
+    @MethodSource("filesParams")
+    void distanceCsv(String synsetsFilename, String hypernymsFilename,
+                     String nounA, String nounB, int expected) {
+        String[] synsets = new In(findUrl(synsetsFilename)).readAllLines();
+        String[] hypernyms = new In(findUrl(hypernymsFilename)).readAllLines();
+        WordNet wordNet = WordNet.fromCsv(synsets, hypernyms);
+
+        assertThat(wordNet.distance(nounA, nounB)).isEqualTo(expected);
+    }
+
+    private URL findUrl(String synsetsFilename) {
+        return Objects.requireNonNull(getClass().getResource(synsetsFilename));
+    }
+
+    private static Stream<Arguments> filesParams() {
+        return Stream.of(Arguments.of("synsets.txt", "hypernyms.txt", "vocal_fold", "tender", 11));
     }
 }
