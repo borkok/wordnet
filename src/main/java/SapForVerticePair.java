@@ -15,8 +15,8 @@ class SapForVerticePair {
     }
 
     Optional<Ancestor> findSAP(int v, int w) {
-        if (digraph.outdegree(v) <= 0 && digraph.outdegree(w) <= 0) {
-            return Optional.empty();
+        if (v == w) {
+            return Optional.of(new Ancestor(v,0));
         }
         return findDistancesSumByVertex(v, w).stream().sorted().findFirst();
     }

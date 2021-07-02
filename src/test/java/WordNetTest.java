@@ -60,6 +60,7 @@ class WordNetTest {
 
         assertThat(wordNet.distance("word", "synonym")).isZero();
         assertThat(wordNet.distance("word", "word")).isZero();
+        assertThat(wordNet.distance("word_net", "word_net")).isZero();
     }
 
     @ParameterizedTest
