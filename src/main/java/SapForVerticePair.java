@@ -16,7 +16,7 @@ class SapForVerticePair {
 
     Optional<Ancestor> findSAP(int v, int w) {
         if (v == w) {
-            return Optional.of(new Ancestor(v,0));
+            return Optional.of(new Ancestor(v, 0));
         }
         return findDistancesSumByVertex(v, w).stream().sorted().findFirst();
     }

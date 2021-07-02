@@ -26,6 +26,7 @@ public class WordNet {
     private WordNet(String[] synsets, String[] hypernyms) {
         initialize(synsets, hypernyms);
     }
+    //koniec usuń
 
     // constructor takes the name of the two input files
     public WordNet(String synsets, String hypernyms) {
@@ -100,9 +101,5 @@ public class WordNet {
         int ancestorIndex = sap.ancestor(indexA, indexB);
         return synsetArray[ancestorIndex];
 
-    }
-
-    // do unit testing of this class
-    public static void main(String[] args) {
     }
 }

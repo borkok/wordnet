@@ -47,7 +47,4 @@ public class SAP {
         WordNetValidator.notNull(v, w);
         return sapForVerticeGroups.findSAP(v, w).map(Ancestor::getAncestor).orElse(-1);
     }
-
-    // do unit testing of this class
-    public static void main(String[] args) {}
 }

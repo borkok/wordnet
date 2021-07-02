@@ -1,6 +1,6 @@
 class Ancestor implements Comparable<Ancestor> {
-    int ancestor;
-    int distanceTo;
+    private int ancestor;
+    private int distanceTo;
 
     Ancestor(int ancestor, int distanceTo) {
         this.ancestor = ancestor;

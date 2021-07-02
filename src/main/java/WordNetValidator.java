@@ -1,12 +1,12 @@
-import edu.princeton.cs.algs4.DepthFirstOrder;
 import edu.princeton.cs.algs4.Digraph;
+import edu.princeton.cs.algs4.DirectedCycle;
 
 import java.util.Arrays;
 import java.util.Objects;
 
 class WordNetValidator {
-    static void notNull(Object... o) {
-        if(Arrays.stream(o).anyMatch(Objects::isNull)) {
+    static void notNull(Object... objects) {
+        if (Arrays.stream(objects).anyMatch(Objects::isNull)) {
             throw new IllegalArgumentException();
         }
     }
@@ -15,7 +15,7 @@ class WordNetValidator {
         if (!hasOnlyOneRoot(digraph)) {
             throw new IllegalArgumentException();
         }
-        if (!isAcyclic(digraph)) {
+        if (isCyclic(digraph)) {
             throw new IllegalArgumentException();
         }
     }
@@ -31,9 +31,7 @@ class WordNetValidator {
         return roots == 1;
     }
 
-    private static boolean isAcyclic(Digraph digraph) {
-        DepthFirstOrder depthFirstOrder = new DepthFirstOrder(digraph);
-        Integer rootCandidate = depthFirstOrder.post().iterator().next();
-        return digraph.outdegree(rootCandidate) == 0;
+    private static boolean isCyclic(Digraph digraph) {
+        return new DirectedCycle(digraph).hasCycle();
     }
 }

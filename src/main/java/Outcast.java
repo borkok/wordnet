@@ -1,13 +1,11 @@
+import java.util.Comparator;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.Optional;
 
-import static java.util.Comparator.reverseOrder;
-import static java.util.Map.Entry.comparingByValue;
-
 public class Outcast {
     private final WordNet wordnet;
-    private Map<NounPair, Integer> distancesByNounPairs = new HashMap<>();
+    private final Map<NounPair, Integer> distancesByNounPairs = new HashMap<>();
 
     public Outcast(WordNet wordnet) {
         this.wordnet = wordnet;
@@ -28,7 +26,7 @@ public class Outcast {
         }
 
         return distanceSumsByNouns.entrySet().stream()
-                                  .sorted(comparingByValue(reverseOrder()))
+                                  .sorted(Map.Entry.comparingByValue(Comparator.reverseOrder()))
                                   .findFirst()
                                   .map(Map.Entry::getKey)
                                   .orElse(null);
@@ -55,10 +53,10 @@ public class Outcast {
             this.nounB = nounB;
         }
 
-        public boolean equals(Object o) {
-            if (this == o) return true;
-            if (o == null || getClass() != o.getClass()) return false;
-            NounPair nounPair = (NounPair) o;
+        public boolean equals(Object other) {
+            if (this == other) return true;
+            if (other == null || getClass() != other.getClass()) return false;
+            NounPair nounPair = (NounPair) other;
             return nounA.equals(nounPair.nounA) && nounB.equals(nounPair.nounB)
                     || nounA.equals(nounPair.nounB) && nounB.equals(nounPair.nounA);
         }
