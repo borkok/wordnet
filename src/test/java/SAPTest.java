@@ -23,8 +23,17 @@ class SAPTest {
                 () -> assertThatThrownBy(() -> new SAP(DigraphBuilder.empty()).ancestor(null, null))
                         .isInstanceOf(IllegalArgumentException.class),
                 () -> assertThatThrownBy(() -> new SAP(DigraphBuilder.empty()).length(null, null))
+                        .isInstanceOf(IllegalArgumentException.class),
+
+                () -> assertThatThrownBy(() -> new SAP(DigraphBuilder.vertices(5).build()).length(-1,0))
+                        .isInstanceOf(IllegalArgumentException.class),
+                () -> assertThatThrownBy(() -> new SAP(DigraphBuilder.vertices(5).build()).length(0,-1))
+                        .isInstanceOf(IllegalArgumentException.class),
+                () -> assertThatThrownBy(() -> new SAP(DigraphBuilder.vertices(5).build()).length(5,0))
+                        .isInstanceOf(IllegalArgumentException.class),
+                () -> assertThatThrownBy(() -> new SAP(DigraphBuilder.vertices(5).build()).length(0, 5))
                         .isInstanceOf(IllegalArgumentException.class)
-        );
+                );
     }
 
     @ParameterizedTest

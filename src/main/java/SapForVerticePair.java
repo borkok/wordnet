@@ -15,6 +15,7 @@ class SapForVerticePair {
     }
 
     Optional<Ancestor> findSAP(int v, int w) {
+        WordNetValidator.vertexIndices(digraph.V(), v, w);
         if (v == w) {
             return Optional.of(new Ancestor(v, 0));
         }

@@ -5,6 +5,15 @@ import java.util.Arrays;
 import java.util.Objects;
 
 class WordNetValidator {
+
+    static void vertexIndices(int V, int... vertices) {
+        for (int v : vertices) {
+            if (v < 0 || v >= V) {
+                throw new IllegalArgumentException();
+            }
+        }
+    }
+
     static void notNull(Object... objects) {
         if (Arrays.stream(objects).anyMatch(Objects::isNull)) {
             throw new IllegalArgumentException();
