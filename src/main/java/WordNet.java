@@ -34,24 +34,30 @@ public class WordNet {
     }
 
     private void initialize(String[] synsetsCsv, String[] hypernymsCsv) {
+        initializeSynset(synsetsCsv);
+        initializeSAP(hypernymsCsv);
+    }
+
+    private void initializeSynset(String[] synsetsCsv) {
         int synsetCount = synsetsCsv.length;
         synsetArray = new String[synsetCount];
-
         wordSet = new HashMap<>();
         for (int i = 0; i < synsetCount; i++) {
             String[] line = synsetsCsv[i].split(",");
 
-            int vertex = Integer.parseInt(line[0]);
             String synset = line[1];
             synsetArray[i] = synset;
 
+            int vertex = Integer.parseInt(line[0]);
             String[] words = synset.split(" ");
             for (String word : words) {
                 wordSet.put(word, vertex);
             }
         }
+    }
 
-        Digraph digraph = new Digraph(synsetCount);
+    private void initializeSAP(String[] hypernymsCsv) {
+        Digraph digraph = new Digraph(synsetArray.length);
         for (String line : hypernymsCsv) {
             String[] hypernyms = line.split(",");
             for (int i = 1; i < hypernyms.length; i++) {
