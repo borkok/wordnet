@@ -1,11 +1,9 @@
 import java.util.Comparator;
-import java.util.HashMap;
-import java.util.Map;
-import java.util.Optional;
+import java.util.stream.Stream;
 
 public class Outcast {
     private final WordNet wordnet;
-    private final Map<NounPair, Integer> distancesByNounPairs = new HashMap<>();
+    private int[][] distancesByNounPairsCache;
 
     public Outcast(WordNet wordnet) {
         this.wordnet = wordnet;
@@ -13,56 +11,66 @@ public class Outcast {
 
     // given an array of WordNet nouns, return an outcast
     public String outcast(String[] nouns) {
-        Map<String, Integer> distanceSumsByNouns = new HashMap<>();
-        for (int i = 0; i < nouns.length; i++) {
-            String from = nouns[i];
+        NounDistance[] distanceSums = new NounDistance[nouns.length];
+        initializeCache(nouns.length);
+
+        for (int fromIndex = 0; fromIndex < nouns.length; fromIndex++) {
+            String from = nouns[fromIndex];
             int distanceSum = 0;
-            for (int j = 0; j < nouns.length; j++) {
-                String to = nouns[j];
-                int distance = findDistance(from, to);
+
+            for (int toIndex = 0; toIndex < nouns.length; toIndex++) {
+                String to = nouns[toIndex];
+                int distance = findDistance(from, fromIndex, to, toIndex);
                 distanceSum += distance;
             }
-            distanceSumsByNouns.put(from, distanceSum);
+
+            distanceSums[fromIndex] = new NounDistance(from, distanceSum);
         }
 
-        return distanceSumsByNouns.entrySet().stream()
-                                  .sorted(Map.Entry.comparingByValue(Comparator.reverseOrder()))
-                                  .findFirst()
-                                  .map(Map.Entry::getKey)
-                                  .orElse(null);
+        return Stream.of(distanceSums)
+                     .max(Comparator.comparingInt(NounDistance::getDistance))
+                     .map(NounDistance::getNoun)
+                     .orElse(null);
     }
 
-    private int findDistance(String from, String to) {
-        NounPair pair = new NounPair(from, to);
-        return Optional.ofNullable(distancesByNounPairs.get(pair))
-                       .orElseGet(() -> calculateAndCacheDistance(pair));
+    private void initializeCache(int length) {
+        distancesByNounPairsCache = new int[length][length];
+        for (int i = 0; i < length; i++) {
+            for (int j = 0; j < length; j++) {
+                distancesByNounPairsCache[i][j] = i == j ? 0 : -1;
+            }
+        }
     }
 
-    private int calculateAndCacheDistance(NounPair pair) {
-        int distance = wordnet.distance(pair.nounA, pair.nounB);
-        distancesByNounPairs.put(pair, distance);
+    private int findDistance(String from, int fromIndex, String to, int toIndex) {
+        int distance = distancesByNounPairsCache[fromIndex][toIndex];
+        if (distance >= 0) return distance;
+
+        return calculateAndCacheDistance(from, fromIndex, to, toIndex);
+    }
+
+    private int calculateAndCacheDistance(String from, int fromIndex, String to, int toIndex) {
+        int distance = wordnet.distance(from, to);
+        distancesByNounPairsCache[fromIndex][toIndex] = distance;
+        distancesByNounPairsCache[toIndex][fromIndex] = distance;
         return distance;
     }
 
-    private static class NounPair {
-        String nounA;
-        String nounB;
+    private static class NounDistance {
+        private final String noun;
+        private final int distance;
 
-        public NounPair(String nounA, String nounB) {
-            this.nounA = nounA;
-            this.nounB = nounB;
+        public NounDistance(String noun, int distance) {
+            this.noun = noun;
+            this.distance = distance;
         }
 
-        public boolean equals(Object other) {
-            if (this == other) return true;
-            if (other == null || getClass() != other.getClass()) return false;
-            NounPair nounPair = (NounPair) other;
-            return nounA.equals(nounPair.nounA) && nounB.equals(nounPair.nounB)
-                    || nounA.equals(nounPair.nounB) && nounB.equals(nounPair.nounA);
+        public String getNoun() {
+            return noun;
         }
 
-        public int hashCode() {
-            return nounA.hashCode() + nounB.hashCode();
+        public int getDistance() {
+            return distance;
         }
     }
 }
