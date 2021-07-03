@@ -7,11 +7,11 @@ import java.util.Optional;
 
 class SapForVerticePair {
     private final Digraph digraph;
-    private final BreadthFirstDirectedPaths[] bfsCache;
+    private final LimitedCache<Integer, BreadthFirstDirectedPaths> bfsCache;
 
     SapForVerticePair(Digraph digraph) {
         this.digraph = digraph;
-        this.bfsCache = new BreadthFirstDirectedPaths[digraph.V()];
+        this.bfsCache = new LimitedCache<>();
     }
 
     Optional<Ancestor> findSAP(int v, int w) {
@@ -36,10 +36,10 @@ class SapForVerticePair {
     }
 
     private BreadthFirstDirectedPaths findBfsForV(int v) {
-        if (bfsCache[v] == null) {
-            bfsCache[v] = new BreadthFirstDirectedPaths(digraph, v);
+        if (!bfsCache.contains(v)) {
+            bfsCache.store(v, new BreadthFirstDirectedPaths(digraph, v));
         }
-        return bfsCache[v];
+        return bfsCache.find(v);
     }
 
 }

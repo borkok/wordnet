@@ -2,9 +2,7 @@ import edu.princeton.cs.algs4.BreadthFirstDirectedPaths;
 import edu.princeton.cs.algs4.Digraph;
 
 import java.util.ArrayList;
-import java.util.HashMap;
 import java.util.List;
-import java.util.Map;
 import java.util.Optional;
 import java.util.Set;
 import java.util.stream.Collectors;
@@ -12,11 +10,11 @@ import java.util.stream.StreamSupport;
 
 class SapForVerticeGroups {
     private final Digraph digraph;
-    private final Map<Set<Integer>, BreadthFirstDirectedPaths> bfsCache;
+    private final LimitedCache<Set<Integer>, BreadthFirstDirectedPaths> bfsCache;
 
     SapForVerticeGroups(Digraph digraph) {
         this.digraph = digraph;
-        this.bfsCache = new HashMap<>();
+        this.bfsCache = new LimitedCache<>();
     }
 
     Optional<Ancestor> findSAP(Iterable<Integer> v, Iterable<Integer> w) {
@@ -43,9 +41,9 @@ class SapForVerticeGroups {
     }
 
     private BreadthFirstDirectedPaths findBfsForV(Set<Integer> v) {
-        if (bfsCache.get(v) == null) {
-            bfsCache.put(v, new BreadthFirstDirectedPaths(digraph, v));
+        if (!bfsCache.contains(v)) {
+            bfsCache.store(v, new BreadthFirstDirectedPaths(digraph, v));
         }
-        return bfsCache.get(v);
+        return bfsCache.find(v);
     }
 }

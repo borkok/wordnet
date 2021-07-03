@@ -1,9 +1,14 @@
 import edu.princeton.cs.algs4.Digraph;
+import edu.princeton.cs.algs4.In;
+import org.apache.commons.lang3.RandomUtils;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.params.ParameterizedTest;
 import org.junit.jupiter.params.provider.Arguments;
 import org.junit.jupiter.params.provider.MethodSource;
 
+import java.net.URL;
+import java.util.HashSet;
+import java.util.Objects;
 import java.util.Set;
 import java.util.stream.Stream;
 
@@ -157,5 +162,28 @@ class SAPTest {
                 )
 
         );
+    }
+
+    @Test
+    void memoryTest() {
+        SAP sap = new SAP(new Digraph(new In(findUrl("digraph-wordnet.txt"))));
+        for (int i = 0; i < 1000; i++) {
+            int v = RandomUtils.nextInt(0, 82192);
+            int w = RandomUtils.nextInt(0, 82192);
+            sap.length(v, w);
+        }
+        for (int i = 0; i < 1000; i++) {
+            Set<Integer> firstSet = new HashSet<>();
+            Set<Integer> secondSet = new HashSet<>();
+            for (int j = 0; j < 5; j++) {
+                firstSet.add(RandomUtils.nextInt(0, 82192));
+                secondSet.add(RandomUtils.nextInt(0, 82192));
+            }
+            sap.length(firstSet, secondSet);
+        }
+    }
+
+    private URL findUrl(String filename) {
+        return Objects.requireNonNull(getClass().getResource(filename));
     }
 }
