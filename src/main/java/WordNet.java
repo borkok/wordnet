@@ -87,7 +87,7 @@ public class WordNet {
 
     // distance between nounA and nounB (defined below)
     public int distance(String nounA, String nounB) {
-        WordNetValidator.notNull(nounA, nounB);
+        if (!isNoun(nounA) || !isNoun(nounB)) throw new IllegalArgumentException();
         List<Integer> indexA = findIndices(nounA);
         List<Integer> indexB = findIndices(nounB);
         return sap.length(indexA, indexB);
@@ -100,7 +100,7 @@ public class WordNet {
     // a synset (second field of synsets.txt) that is the common ancestor of nounA and nounB
     // in a shortest ancestral path (defined below)
     public String sap(String nounA, String nounB) {
-        WordNetValidator.notNull(nounA, nounB);
+        if (!isNoun(nounA) || !isNoun(nounB)) throw new IllegalArgumentException();
         List<Integer> indexA = findIndices(nounA);
         List<Integer> indexB = findIndices(nounB);
         int ancestorIndex = sap.ancestor(indexA, indexB);
