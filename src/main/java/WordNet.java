@@ -16,7 +16,7 @@ import java.util.List;
  */
 public class WordNet {
 
-    //one noun can be part of a few synsets, each with distinct index
+    // one noun can be part of a few synsets, each with distinct index
     private HashMap<String, List<Integer>> synsetIndicesByNouns;
     private String[] synsetArray;
     private SAP sap;

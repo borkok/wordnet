@@ -6,9 +6,9 @@ import java.util.Objects;
 
 class WordNetValidator {
 
-    static void vertexIndices(int V, int... vertices) {
+    static void vertexIndices(int count, int... vertices) {
         for (int v : vertices) {
-            if (v < 0 || v >= V) {
+            if (v < 0 || v >= count) {
                 throw new IllegalArgumentException();
             }
         }
